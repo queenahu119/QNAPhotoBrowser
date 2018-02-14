@@ -19,6 +19,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 @property (nonatomic, strong) NSArray *aryData;
 @property (nonatomic, strong) QNADataManager *dataManager;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
+@property (nonatomic, strong) NSCache *imageCache;
 @end
 
 @implementation QNAPhotoBrowserTableViewController
@@ -30,6 +31,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     self.dataManager = [[QNADataManager alloc] init];
+    self.imageCache = [[NSCache alloc] init];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
@@ -72,29 +74,42 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     QNAPhotoRecord *record = [self.aryData objectAtIndex: indexPath.row];
 
-    cell.titleLabel.text = (record.photoName) ? record.photoName: @"Default";
+    cell.titleLabel.text = (record.photoName) ? record.photoName: @"None";
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSString *description = [NSString stringWithFormat:@"%@", record.photoDescription];
 
-    cell.descriptionTextView.text = (record.photoDescription) ? description : @"Default";
+    cell.descriptionTextView.text = (record.photoDescription) ? description : @"None";
 
     cell.photoImageView.image = [UIImage imageNamed:@"defaultImage"];
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
-        [self.dataManager startDownloadImage:record photoDataReady:^(NSData *data) {
+
+    // Using cache to save image.
+    UIImage *image = [self.imageCache objectForKey:record.photoURLString];
+
+    if (image) {
+        NSLog(@"Use cache");
+        cell.photoImageView.image = image;
+    } else {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+            NSURL *url = [[NSURL alloc] initWithString:record.photoURLString];
+            NSData *data = [NSData dataWithContentsOfURL:url];
 
             dispatch_async(dispatch_get_main_queue(), ^{
-
                 if (!data) {
-                    cell.descriptionTextView.text = (record.photoDescription) ? [NSString stringWithFormat:@"[Image Fail] %@", record.photoDescription] : @"Default";
-                }
-                cell.photoImageView.image = [UIImage imageWithData: data];
-            });
-        }];
+                    cell.photoImageView.image = [UIImage imageNamed:@"imageError"];
+                } else {
+                    UIImage *image = [UIImage imageWithData: data];
+                    [self.imageCache setObject:image forKey:record.photoURLString];
 
-    });
+                    NSLog(@"Svae cache");
+                    cell.photoImageView.image = image;
+                }
+
+            });
+        });
+    }
 
 
     [cell.contentView layoutIfNeeded];
