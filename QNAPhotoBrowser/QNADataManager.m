@@ -61,7 +61,14 @@ static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4
         record.photoURLString = [self verifyNullValue:[recordDic valueForKey:@"imageHref"]];
         record.photoDescription = [self verifyNullValue:[recordDic valueForKey:@"description"]];
 
-        [groups addObject:record];
+        // Any empty content can be clipped.
+        if (!record.photoName || !record.photoURLString || !record.photoDescription) {
+            // Not add this row data
+            NSLog(@"Not add this row data.");
+        } else {
+            [groups addObject:record];
+        }
+
     }
 
     NSDictionary *result = @{@"title" : titleString,
