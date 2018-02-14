@@ -18,6 +18,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
 @property (nonatomic, strong) NSArray *aryData;
 @property (nonatomic, strong) QNADataManager *dataManager;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 @end
 
 @implementation QNAPhotoBrowserTableViewController
@@ -41,6 +42,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     });
 
+    [self setUpRefreshControl];
 
 }
 
@@ -100,6 +102,24 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     });
 
     return cell;
+}
+
+#pragma mark - UI
+
+- (void)setUpRefreshControl {
+
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+
+    [self.tableView addSubview:self.refreshControl];
+}
+
+#pragma mark - Action Handler
+
+-(void)refreshTable
+{
+    [self.tableView reloadData];
+    [self.refreshControl endRefreshing];
 }
 
 @end
