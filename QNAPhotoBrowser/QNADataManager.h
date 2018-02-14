@@ -7,9 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "QNAPhotoRecord.h"
+
+typedef void (^blockPhotoDataReady) (NSData* data);
 
 @interface QNADataManager : NSObject
 
 - (void)requestJSONData:(void (^)(NSString *title, NSArray *results))completion;
+- (void)startDownloadImage:(QNAPhotoRecord *)photoRecord photoDataReady:(blockPhotoDataReady) block;
 
 @end

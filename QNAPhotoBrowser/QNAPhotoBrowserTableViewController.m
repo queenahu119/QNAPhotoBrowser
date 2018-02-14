@@ -17,6 +17,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 @interface QNAPhotoBrowserTableViewController ()
 
 @property (nonatomic, strong) NSArray *aryData;
+@property (nonatomic, strong) QNADataManager *dataManager;
 @end
 
 @implementation QNAPhotoBrowserTableViewController
@@ -24,18 +25,16 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    QNADataManager *dataManager = [[QNADataManager alloc] init];
-
+    self.dataManager = [[QNADataManager alloc] init];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
-        [dataManager requestJSONData:^(NSString *title, NSArray *results) {
+        [self.dataManager requestJSONData:^(NSString *title, NSArray *results) {
             dispatch_async(dispatch_get_main_queue(), ^{
 
                 self.navigationItem.title = title;
                 self.aryData = results;
 
-                NSLog(@"Fetch Data Finish.");
                 [self.tableView reloadData];
             });
         }];
@@ -68,7 +67,6 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-
     QNAPhotoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:QNAPhotoCellIdentifier forIndexPath:indexPath];
 
     QNAPhotoRecord *record = [self.aryData objectAtIndex: indexPath.row];
@@ -76,8 +74,29 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     cell.photoImageView.backgroundColor = [UIColor grayColor];
     cell.titleLabel.text = (record.photoName) ? record.photoName: @"Default";
-    cell.descriptionTextView.text = (record.photoDescription) ? record.photoDescription : @"Default";
 
+    NSString *description = [NSString stringWithFormat:@"%@", record.photoDescription];
+
+    if (!record.photoURLString) {
+        description = [NSString stringWithFormat:@"[No Image] %@", record.photoDescription];
+    }
+
+    cell.descriptionTextView.text = (record.photoDescription) ? description : @"Default";
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        [self.dataManager startDownloadImage:record photoDataReady:^(NSData *data) {
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                if (!data) {
+                    cell.descriptionTextView.text = (record.photoDescription) ? [NSString stringWithFormat:@"[Image Fail] %@", record.photoDescription] : @"Default";
+                }
+                cell.photoImageView.image = [UIImage imageWithData: data];
+            });
+        }];
+
+    });
 
     return cell;
 }

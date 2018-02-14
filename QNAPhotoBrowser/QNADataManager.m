@@ -7,9 +7,10 @@
 //
 
 #import "QNADataManager.h"
-#import "QNAPhotoRecord.h"
+
 
 static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json";
+
 
 @implementation QNADataManager
 
@@ -67,6 +68,25 @@ static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4
                              @"rows": groups};
 
     return result;
+}
+
+- (void)startDownloadImage:(QNAPhotoRecord *)photoRecord photoDataReady:(blockPhotoDataReady) block {
+
+    if (!photoRecord.photoURLString) {
+        return;
+    }
+    NSURL *url = [[NSURL alloc] initWithString:photoRecord.photoURLString];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+
+        if (!error && data)
+        {
+            block(data);
+        }
+
+    }];
 }
 
 /*! Replace <NSNull> with nil.
