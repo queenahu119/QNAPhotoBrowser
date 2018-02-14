@@ -72,18 +72,15 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     QNAPhotoRecord *record = [self.aryData objectAtIndex: indexPath.row];
 
-    cell.photoImageView.backgroundColor = [UIColor grayColor];
     cell.titleLabel.text = (record.photoName) ? record.photoName: @"Default";
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSString *description = [NSString stringWithFormat:@"%@", record.photoDescription];
 
-    if (!record.photoURLString) {
-        description = [NSString stringWithFormat:@"[No Image] %@", record.photoDescription];
-    }
-
     cell.descriptionTextView.text = (record.photoDescription) ? description : @"Default";
 
+    cell.photoImageView.image = [UIImage imageNamed:@"defaultImage"];
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
         [self.dataManager startDownloadImage:record photoDataReady:^(NSData *data) {
