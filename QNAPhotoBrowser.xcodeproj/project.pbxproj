@@ -10,6 +10,8 @@
 		96D9B9F442FE4F059B65F31E /* libPods-QNAPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0230F18750B763B03D9BEE54 /* libPods-QNAPhotoBrowser.a */; };
 		9BCAA1AC20339AD300F86BCF /* QNAPhotoBrowserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BCAA1AB20339AD300F86BCF /* QNAPhotoBrowserTableViewController.m */; };
 		9BCAA1AF20339D2B00F86BCF /* QNAPhotoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BCAA1AE20339D2B00F86BCF /* QNAPhotoTableViewCell.m */; };
+		9BCAA1BB2033B80E00F86BCF /* QNAPhotoRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BCAA1BA2033B80E00F86BCF /* QNAPhotoRecord.m */; };
+		9BCAA1BE2033BC3100F86BCF /* QNADataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BCAA1BD2033BC3100F86BCF /* QNADataManager.m */; };
 		9BF8F28620338F3B00525B19 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF8F28520338F3B00525B19 /* AppDelegate.m */; };
 		9BF8F28920338F3B00525B19 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF8F28820338F3B00525B19 /* ViewController.m */; };
 		9BF8F28C20338F3B00525B19 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BF8F28A20338F3B00525B19 /* Main.storyboard */; };
@@ -26,6 +28,10 @@
 		9BCAA1AB20339AD300F86BCF /* QNAPhotoBrowserTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QNAPhotoBrowserTableViewController.m; sourceTree = "<group>"; };
 		9BCAA1AD20339D2B00F86BCF /* QNAPhotoTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QNAPhotoTableViewCell.h; sourceTree = "<group>"; };
 		9BCAA1AE20339D2B00F86BCF /* QNAPhotoTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QNAPhotoTableViewCell.m; sourceTree = "<group>"; };
+		9BCAA1B92033B80E00F86BCF /* QNAPhotoRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QNAPhotoRecord.h; sourceTree = "<group>"; };
+		9BCAA1BA2033B80E00F86BCF /* QNAPhotoRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QNAPhotoRecord.m; sourceTree = "<group>"; };
+		9BCAA1BC2033BC3100F86BCF /* QNADataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QNADataManager.h; sourceTree = "<group>"; };
+		9BCAA1BD2033BC3100F86BCF /* QNADataManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QNADataManager.m; sourceTree = "<group>"; };
 		9BF8F28120338F3B00525B19 /* QNAPhotoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QNAPhotoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BF8F28420338F3B00525B19 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9BF8F28520338F3B00525B19 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -85,8 +91,12 @@
 				9BF8F28820338F3B00525B19 /* ViewController.m */,
 				9BCAA1AA20339AD300F86BCF /* QNAPhotoBrowserTableViewController.h */,
 				9BCAA1AB20339AD300F86BCF /* QNAPhotoBrowserTableViewController.m */,
+				9BCAA1BC2033BC3100F86BCF /* QNADataManager.h */,
+				9BCAA1BD2033BC3100F86BCF /* QNADataManager.m */,
 				9BCAA1AD20339D2B00F86BCF /* QNAPhotoTableViewCell.h */,
 				9BCAA1AE20339D2B00F86BCF /* QNAPhotoTableViewCell.m */,
+				9BCAA1B92033B80E00F86BCF /* QNAPhotoRecord.h */,
+				9BCAA1BA2033B80E00F86BCF /* QNAPhotoRecord.m */,
 				9BF8F28A20338F3B00525B19 /* Main.storyboard */,
 				9BF8F28D20338F3B00525B19 /* Assets.xcassets */,
 				9BF8F28F20338F3B00525B19 /* LaunchScreen.storyboard */,
@@ -231,9 +241,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BCAA1AF20339D2B00F86BCF /* QNAPhotoTableViewCell.m in Sources */,
+				9BCAA1BE2033BC3100F86BCF /* QNADataManager.m in Sources */,
 				9BCAA1AC20339AD300F86BCF /* QNAPhotoBrowserTableViewController.m in Sources */,
 				9BF8F28920338F3B00525B19 /* ViewController.m in Sources */,
 				9BF8F29420338F3B00525B19 /* main.m in Sources */,
+				9BCAA1BB2033B80E00F86BCF /* QNAPhotoRecord.m in Sources */,
 				9BF8F28620338F3B00525B19 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
