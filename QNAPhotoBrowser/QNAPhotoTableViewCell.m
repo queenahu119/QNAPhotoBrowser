@@ -12,7 +12,10 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    // Initialization code
+
+    [self.descriptionTextView setScrollEnabled:NO];
+    [self.descriptionTextView setEditable:NO];
+    [self.descriptionTextView setSelectable:NO];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

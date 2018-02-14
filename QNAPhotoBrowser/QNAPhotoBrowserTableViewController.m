@@ -74,7 +74,8 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     cell.photoImageView.backgroundColor = [UIColor grayColor];
     cell.titleLabel.text = (record.photoName) ? record.photoName: @"Default";
-
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     NSString *description = [NSString stringWithFormat:@"%@", record.photoDescription];
 
     if (!record.photoURLString) {
