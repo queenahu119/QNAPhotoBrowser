@@ -26,6 +26,9 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.tableView.estimatedRowHeight = 150;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+
     self.dataManager = [[QNADataManager alloc] init];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -63,16 +66,11 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     return [self.aryData count];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 120;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     QNAPhotoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:QNAPhotoCellIdentifier forIndexPath:indexPath];
 
     QNAPhotoRecord *record = [self.aryData objectAtIndex: indexPath.row];
-
 
     cell.photoImageView.backgroundColor = [UIColor grayColor];
     cell.titleLabel.text = (record.photoName) ? record.photoName: @"Default";
@@ -101,6 +99,9 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     });
 
+
+    [cell.contentView layoutIfNeeded];
+
     return cell;
 }
 
@@ -116,10 +117,11 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
 #pragma mark - Action Handler
 
--(void)refreshTable
+- (void)refreshTable
 {
     [self.tableView reloadData];
     [self.refreshControl endRefreshing];
 }
+
 
 @end
