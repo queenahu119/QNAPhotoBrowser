@@ -13,6 +13,7 @@
 #import "Masonry.h"
 
 static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
+static NSInteger QNAMaxNum = 5;
 
 
 @interface QNAPhotoBrowserTableViewController ()
@@ -30,14 +31,13 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     [super viewDidLoad];
 
     self.tableView.estimatedRowHeight = 150;
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     self.dataManager = [[QNADataManager alloc] init];
     self.imageCache = [[NSCache alloc] init];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
-        [self.dataManager requestJSONData:^(NSString *title, NSArray *results) {
+        [self.dataManager requestJSONData:0 limit:QNAMaxNum completion:^(NSString *title, NSArray *results) {
             dispatch_async(dispatch_get_main_queue(), ^{
 
                 self.navigationItem.title = title;
@@ -52,6 +52,29 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     [self setUpRefreshControl];
 }
 
+- (void)appendItems {
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+        [self.dataManager requestJSONData:self.aryData.count limit:QNAMaxNum completion:^(NSString *title, NSArray *results) {
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                NSMutableArray *aryTemp = [self.aryData mutableCopy];
+
+                if (results.count > 0)
+                {
+                    [aryTemp addObjectsFromArray:results];
+                    self.aryData = aryTemp;
+                }
+
+                [self.tableView reloadData];
+            });
+
+        }];
+
+    });
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -69,6 +92,17 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     return [self.aryData count];
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    QNAPhotoRecord *record = [self.aryData objectAtIndex: indexPath.row];
+
+    if (!record.photoURLString) {
+        return 0;
+    } else {
+        return UITableViewAutomaticDimension;
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     QNAPhotoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:QNAPhotoCellIdentifier forIndexPath:indexPath];
@@ -82,34 +116,40 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
     cell.descriptionTextView.text = (record.photoDescription) ? description : @"None";
 
-    cell.photoImageView.image = [UIImage imageNamed:@"defaultImage"];
-
-
-    // Using cache to save image.
-    UIImage *image = [self.imageCache objectForKey:record.photoURLString];
-
-    if (image) {
-        NSLog(@"Use cache");
-        cell.photoImageView.image = image;
+    if (!record.photoURLString) {
+        cell.hidden = YES;
     } else {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
-            NSURL *url = [[NSURL alloc] initWithString:record.photoURLString];
-            NSData *data = [NSData dataWithContentsOfURL:url];
+        cell.photoImageView.image = [UIImage imageNamed:@"defaultImage"];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (!data) {
-                    cell.photoImageView.image = [UIImage imageNamed:@"imageError"];
-                } else {
-                    UIImage *image = [UIImage imageWithData: data];
-                    [self.imageCache setObject:image forKey:record.photoURLString];
+        // Using cache to save image.
+        UIImage *image = [self.imageCache objectForKey:record.photoURLString];
 
-                    NSLog(@"Svae cache");
-                    cell.photoImageView.image = image;
-                }
+        if (image) {
+            NSLog(@"Use cache");
+            cell.photoImageView.image = image;
+        } else {
 
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+                NSURL *url = [[NSURL alloc] initWithString:record.photoURLString];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!data) {
+                        cell.photoImageView.image = [UIImage imageNamed:@"imageError"];
+                    } else {
+                        UIImage *image = [UIImage imageWithData: data];
+                        [self.imageCache setObject:image forKey:record.photoURLString];
+
+                        NSLog(@"Svae cache");
+                        cell.photoImageView.image = image;
+                    }
+
+                });
             });
-        });
+
+        }
     }
 
     UIEdgeInsets padding = UIEdgeInsetsMake(10, 10, -10, -10);

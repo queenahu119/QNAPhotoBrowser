@@ -13,6 +13,7 @@ typedef void (^blockPhotoDataReady) (NSData* data);
 
 @interface QNADataManager : NSObject
 
+- (void)requestJSONData:(NSInteger) nStart limit: (NSInteger) nLimit completion:(void (^)(NSString *title, NSArray *results))completion;
 - (void)requestJSONData:(void (^)(NSString *title, NSArray *results))completion;
 - (void)startDownloadImage:(QNAPhotoRecord *)photoRecord photoDataReady:(blockPhotoDataReady) block;
 

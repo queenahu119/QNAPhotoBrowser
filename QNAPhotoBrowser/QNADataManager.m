@@ -27,15 +27,32 @@ static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4
         } else {
             NSError *error = nil;
 
-            NSDictionary *dic = [self photoDataFromJSON:data error:&error];
+            NSDictionary *dic = [self photoDataFromJSON:data start:0 limit:0 error:&error];
+            completion([dic objectForKey:@"title"], [dic objectForKey:@"rows"]);
+        }
+    }];
+}
+
+- (void)requestJSONData:(NSInteger)nStart limit:(NSInteger)nLimit completion:(void (^)(NSString *title, NSArray *results))completion {
+
+    NSString *urlAsString = [NSString stringWithFormat:@"%@", QNAJsonURLString];
+    NSURL *url = [[NSURL alloc] initWithString:urlAsString];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        if (data == nil) {
+            // show error message
+        } else {
+            NSError *error = nil;
+
+            NSDictionary *dic = [self photoDataFromJSON:data start:nStart limit:nLimit error:&error];
 
             completion([dic objectForKey:@"title"], [dic objectForKey:@"rows"]);
         }
     }];
 }
 
-
-- (NSDictionary *)photoDataFromJSON:(NSData *)objectNotation error:(NSError **)error
+- (NSDictionary *)photoDataFromJSON:(NSData *)objectNotation start:(NSInteger)nStart limit:(NSInteger)nLimit error:(NSError **)error
 {
 
     NSError *localError = nil;
@@ -54,21 +71,19 @@ static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4
     NSString *titleString = [self verifyNullValue:[parsedObject valueForKey:@"title"]];
     NSArray *photoArray = [parsedObject valueForKey:@"rows"];
 
-    for (NSDictionary *recordDic in photoArray) {
+    // 0 means NO Limit
+    NSInteger itemsCount = (nLimit != 0) ? MIN(photoArray.count,(nStart+nLimit)): photoArray.count;
+    for (NSInteger i = nStart; i < itemsCount; i++) {
+
+        NSDictionary *recordDic = [photoArray objectAtIndex:i];
+
         QNAPhotoRecord *record = [[QNAPhotoRecord alloc] init];
 
         record.photoName = [self verifyNullValue:[recordDic valueForKey:@"title"]];
         record.photoURLString = [self verifyNullValue:[recordDic valueForKey:@"imageHref"]];
         record.photoDescription = [self verifyNullValue:[recordDic valueForKey:@"description"]];
 
-        // Any empty content can be clipped.
-        if (!record.photoName || !record.photoURLString || !record.photoDescription) {
-            // Not add this row data
-            NSLog(@"Not add this row data.");
-        } else {
-            [groups addObject:record];
-        }
-
+        [groups addObject:record];
     }
 
     NSDictionary *result = @{@"title" : titleString,
@@ -77,7 +92,7 @@ static NSString *QNAJsonURLString = @"https://dl.dropboxusercontent.com/s/2iodh4
     return result;
 }
 
-- (void)startDownloadImage:(QNAPhotoRecord *)photoRecord photoDataReady:(blockPhotoDataReady) block {
+- (void)startDownloadImage:(QNAPhotoRecord *)photoRecord photoDataReady:(blockPhotoDataReady)block {
 
     if (!photoRecord.photoURLString) {
         return;
