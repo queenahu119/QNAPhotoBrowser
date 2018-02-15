@@ -22,6 +22,7 @@ static NSInteger QNAMaxNum = 5;
 @property (nonatomic, strong) QNADataManager *dataManager;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 @property (nonatomic, strong) NSCache *imageCache;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @end
 
 @implementation QNAPhotoBrowserTableViewController
@@ -50,6 +51,7 @@ static NSInteger QNAMaxNum = 5;
     });
 
     [self setUpRefreshControl];
+    [self setUpNavigationUI];
 }
 
 - (void)appendItems {
@@ -59,6 +61,9 @@ static NSInteger QNAMaxNum = 5;
         [self.dataManager requestJSONData:self.aryData.count limit:QNAMaxNum completion:^(NSString *title, NSArray *results) {
 
             dispatch_async(dispatch_get_main_queue(), ^{
+
+                [self.activityIndicator stopAnimating];
+                [self.refreshControl endRefreshing];
 
                 NSMutableArray *aryTemp = [self.aryData mutableCopy];
 
@@ -75,6 +80,7 @@ static NSInteger QNAMaxNum = 5;
 
     });
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -198,19 +204,38 @@ static NSInteger QNAMaxNum = 5;
     [self.tableView addSubview:self.refreshControl];
 }
 
+- (void)setUpNavigationUI {
+
+    UIBarButtonItem* refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(onTapRefresh:)];
+    self.navigationItem.rightBarButtonItem = refreshButton;
+
+
+    self.activityIndicator = [[UIActivityIndicatorView alloc] init];
+    [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.activityIndicator setCenter:self.tableView.center];
+
+    [self.activityIndicator setColor:[UIColor orangeColor]];
+    [self.view addSubview:self.activityIndicator];
+}
+
 #pragma mark - Action Handler
 
 - (void)refreshTable
 {
-    [self.tableView reloadData];
-    [self.refreshControl endRefreshing];
+    [self appendItems];
+}
+
+-(void)onTapRefresh:(UIBarButtonItem*)item {
+
+    [self.activityIndicator startAnimating];
+    [self appendItems];
+
 }
 
 #pragma mark - UIViewControllerRotation
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
-
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
