@@ -1,5 +1,5 @@
 # QNAPhotoBrowser
-This is a photo Browser app.
+This is a photo browser app.
 
 ## features
 
@@ -27,10 +27,16 @@ This is a photo Browser app.
   ]
   }
   ```
-## Build Requirements
+## Installation
 
-iOS 8.0 SDK or later
+### CocoaPods
+
+```
+pod install
+```
+Open /Folder/QNAPhotoBrowser.xcworkspace
 
 ## Runtime Requirements
 
- iOS 8.0 or later
+ * iOS 8.0 or later
+ * CocoaPods 
