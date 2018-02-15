@@ -24,6 +24,7 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 @end
 
 @implementation QNAPhotoBrowserTableViewController
+@synthesize refreshControl = _refreshControl;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
