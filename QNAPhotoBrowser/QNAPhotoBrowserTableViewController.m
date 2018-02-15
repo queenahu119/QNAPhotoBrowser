@@ -10,6 +10,7 @@
 #import "QNAPhotoTableViewCell.h"
 #import "QNADataManager.h"
 #import "QNAPhotoRecord.h"
+#import "Masonry.h"
 
 static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
 
@@ -48,7 +49,6 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     });
 
     [self setUpRefreshControl];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -111,8 +111,38 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
         });
     }
 
+    UIEdgeInsets padding = UIEdgeInsetsMake(10, 10, -10, -10);
 
-    [cell.contentView layoutIfNeeded];
+    // For iPad
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        CGFloat space = CGRectGetWidth([UIScreen mainScreen].bounds)/3;
+
+        padding = UIEdgeInsetsMake(10, space, -10, -space);
+    }
+
+    [cell.photoImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
+        make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
+        make.top.equalTo(cell.contentView.mas_top).offset(padding.top);
+        make.height.equalTo(@150);
+    }];
+
+    [cell.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
+        make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
+        make.top.equalTo(cell.photoImageView.mas_bottom).offset(padding.top);
+        make.height.equalTo(@(CGRectGetHeight(cell.titleLabel.frame)));
+    }];
+
+    [cell.descriptionTextView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
+        make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
+        make.top.equalTo(cell.titleLabel.mas_bottom);
+        make.bottom.equalTo(cell.contentView.mas_bottom).offset(padding.bottom);
+    }];
+
+    [cell setNeedsDisplay];
+    [cell layoutIfNeeded];
 
     return cell;
 }
@@ -135,5 +165,18 @@ static NSString *QNAPhotoCellIdentifier = @"PhotoCellIdentifier";
     [self.refreshControl endRefreshing];
 }
 
+#pragma mark - UIViewControllerRotation
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
+{
+
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+
+        [self.tableView reloadData];
+    } completion:nil];
+
+}
 
 @end
