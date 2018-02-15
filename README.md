@@ -9,7 +9,11 @@ This is a photo browser app.
 * Pull down to refresh data
 * Support both iPhone and iPad
 
+<<<<<<< HEAD
 ![image](./doc/img_normal.PNG)
+=======
+<img src="https://github.com/queenahu119/QNAPhotoBrowser/blob/master/doc/img_normal.PNG" width="250">
+>>>>>>> a7b26ba04080985040dee70c5a606627a9a5e4ed
 
 ## JSON Format
   ```
@@ -33,7 +37,10 @@ This is a photo browser app.
 
 ### CocoaPods
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a7b26ba04080985040dee70c5a606627a9a5e4ed
 Install the pods and open the .xcworkspace file to see the project in Xcode.
 
 ```
@@ -41,7 +48,10 @@ $ cd project-name
 $ pod install
 $ open project-name.xcworkspace
 ```
+<<<<<<< HEAD
 
+=======
+>>>>>>> a7b26ba04080985040dee70c5a606627a9a5e4ed
 
 ## Runtime Requirements
 
