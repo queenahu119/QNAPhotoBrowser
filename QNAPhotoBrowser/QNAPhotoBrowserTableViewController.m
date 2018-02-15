@@ -212,10 +212,13 @@ static NSInteger QNAMaxNum = 5;
 
     self.activityIndicator = [[UIActivityIndicatorView alloc] init];
     [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [self.activityIndicator setCenter:self.tableView.center];
+    [self.activityIndicator setCenter:self.navigationController.view.center];
 
     [self.activityIndicator setColor:[UIColor orangeColor]];
-    [self.view addSubview:self.activityIndicator];
+    [self.navigationController.view addSubview:self.activityIndicator];
+
+    self.activityIndicator.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+
 }
 
 #pragma mark - Action Handler
