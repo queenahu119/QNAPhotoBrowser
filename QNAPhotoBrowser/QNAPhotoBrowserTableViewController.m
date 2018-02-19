@@ -170,22 +170,22 @@ static NSInteger QNAMaxNum = 5;
     [cell.photoImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
         make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
-        make.top.equalTo(cell.contentView.mas_top).offset(padding.top);
-        make.height.equalTo(@150);
+        make.top.equalTo(cell.contentView.mas_top).offset(padding.top).priorityHigh();
+        make.height.equalTo(@150).priorityHigh();
     }];
 
     [cell.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
         make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
-        make.top.equalTo(cell.photoImageView.mas_bottom).offset(padding.top);
-        make.height.equalTo(@(CGRectGetHeight(cell.titleLabel.frame)));
+        make.top.equalTo(cell.photoImageView.mas_bottom).offset(padding.top).priorityMedium();
+        make.bottom.equalTo(cell.descriptionTextView.mas_top).offset(padding.bottom).priorityMedium();
     }];
 
     [cell.descriptionTextView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cell.contentView.mas_left).offset(padding.left);
         make.right.equalTo(cell.contentView.mas_right).offset(padding.right);
-        make.top.equalTo(cell.titleLabel.mas_bottom);
-        make.bottom.equalTo(cell.contentView.mas_bottom).offset(padding.bottom);
+        make.top.equalTo(cell.titleLabel.mas_bottom).priorityMedium();
+        make.bottom.equalTo(cell.contentView.mas_bottom).offset(padding.bottom).priorityMedium();
     }];
 
     [cell setNeedsDisplay];
